@@ -1,5 +1,6 @@
 extern crate bindgen;
 
+use cmake;
 use std::env;
 use std::path::PathBuf;
 
@@ -46,23 +47,15 @@ fn main() {
     }
 
     // build libwhisper.a
-    env::set_current_dir("whisper.cpp").expect("Unable to change directory");
-    let code = std::process::Command::new("make")
-        .arg("libwhisper.a")
-        .status()
-        .expect("Failed to build libwhisper.a");
-    if code.code() != Some(0) {
-        panic!("Failed to build libwhisper.a");
-    }
+    env::set_current_dir("whisper.cpp").expect("Unable to locate a directory");
+
+    let dst = cmake::build(".");
     // move libwhisper.a to where Cargo expects it (OUT_DIR)
     std::fs::copy(
-        "libwhisper.a",
-        format!("{}/libwhisper.a", env::var("OUT_DIR").unwrap()),
+        format!("{}/lib/static/whisper.lib", dst.display()),
+        env::var("OUT_DIR").unwrap() + "/whisper.lib",
     )
     .expect("Failed to copy libwhisper.a");
-    // clean the whisper build directory to prevent Cargo from complaining during crate publish
-    std::process::Command::new("make")
-        .arg("clean")
-        .status()
-        .expect("Failed to clean whisper build directory");
+
+    
 }

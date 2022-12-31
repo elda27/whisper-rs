@@ -14,3 +14,4 @@ links = "whisper"
 
 [build-dependencies]
 bindgen = "0.61"
+cmake = "0.1.49"
