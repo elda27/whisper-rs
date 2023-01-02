@@ -49,13 +49,19 @@ fn main() {
     // build libwhisper.a
     env::set_current_dir("whisper.cpp").expect("Unable to locate a directory");
 
-    let dst = cmake::build(".");
+    let dst = cmake::Config::new(".").define("BUILD_SHARED_LIBS", "off").build();
     // move libwhisper.a to where Cargo expects it (OUT_DIR)
     std::fs::copy(
         format!("{}/lib/static/whisper.lib", dst.display()),
         env::var("OUT_DIR").unwrap() + "/whisper.lib",
     )
-    .expect("Failed to copy libwhisper.a");
+    .expect("Failed to copy whisper.lib");
+
+    // std::fs::copy(
+    //     format!("{}/build/bin/Debug/whisper.dll", dst.display()),
+    //     env::var("OUT_DIR").unwrap() + "/whisper.dll",
+    // )
+    // .expect("Failed to copy whisper.dll");
 
     
 }
